@@ -17,6 +17,20 @@ function validator(validateAbleObj: Validatable) {
   if (validateAbleObj.required) {
     isValid = isValid && validateAbleObj.value.toString().trim().length !== 0;
   }
+  if (validateAbleObj.minLength != null && typeof validateAbleObj.value === 'string') {
+    isValid = isValid && validateAbleObj.value.length >= validateAbleObj.minLength;
+  }
+  if (validateAbleObj.maxLength != null && typeof validateAbleObj.value === 'string') {
+    isValid = isValid && validateAbleObj.value.length <= validateAbleObj.maxLength;
+  }
+  if (validateAbleObj.min != null && typeof validateAbleObj.value === 'number') {
+    isValid = isValid && validateAbleObj.value >= validateAbleObj.min;
+  }
+  if (validateAbleObj.max != null && typeof validateAbleObj.value === 'number') {
+    isValid = isValid && validateAbleObj.value <= validateAbleObj.max;
+  }
+
+  return isValid;
 }
 
 // Decorators
@@ -70,11 +84,23 @@ class ProjectInput {
     const enteredDescription = this.descriptionInpEl.value;
     const enteredPeople = this.peopleInpEl.value;
 
-    if (
-      enteredTitle.trim().length === 0 ||
-      enteredDescription.trim().length === 0 ||
-      enteredPeople.trim().length === 0
-    ) {
+    const validateTitle: Validatable = {
+      value: enteredTitle,
+      required: true,
+    };
+    const validateDescription: Validatable = {
+      value: enteredDescription,
+      required: true,
+      minLength: 5,
+    };
+    const validatePeople: Validatable = {
+      value: +enteredPeople,
+      required: true,
+      min: 1,
+      max: 5,
+    };
+
+    if (!validator(validateTitle) || !validator(validateDescription) || !validator(validatePeople)) {
       alert('Invalid input! Please try again');
     } else {
       return [enteredTitle, enteredDescription, +enteredPeople];
