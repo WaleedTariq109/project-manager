@@ -51,6 +51,10 @@ class ProjectInput {
     }
   }
 
+  private clearInput() {
+    this.titleInpEl.value = this.descriptionInpEl.value = this.peopleInpEl.value = '';
+  }
+
   @AutoBind
   private submitHandler(event: Event) {
     event.preventDefault();
@@ -61,6 +65,8 @@ class ProjectInput {
       console.log(description);
       console.log(people);
     }
+
+    this.clearInput();
   }
 
   private configure() {
