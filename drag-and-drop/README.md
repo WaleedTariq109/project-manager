@@ -14,4 +14,4 @@ tsc
 npm start
 ```
 
-Or just click this [Live Demo.](https://drag-n-drop-v1.netlify.app/)
+Or just click this for [Live Demo.](https://drag-n-drop-v1.netlify.app/)
