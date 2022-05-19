@@ -3,7 +3,7 @@ function AutoBind(_: any, __: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value;
   const adjDescriptor: PropertyDescriptor = {
     configurable: true,
-    enumerable: true,
+    enumerable: false,
     get() {
       const boundFN = originalMethod.bind(this);
       return boundFN;
