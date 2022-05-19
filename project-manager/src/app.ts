@@ -15,7 +15,19 @@ class ProjectInput {
     this.titleInpEl = <HTMLInputElement>this.element.querySelector('#title');
     this.descriptionInpEl = <HTMLInputElement>this.element.querySelector('#description');
     this.peopleInpEl = <HTMLInputElement>this.element.querySelector('#people');
+
+    this.configure();
     this.appendHtml();
+  }
+
+  private submitHandler(event: Event) {
+    // Prevent Browser's Default Behaviour
+    event.preventDefault();
+    console.log(this.titleInpEl.value);
+  }
+
+  private configure() {
+    this.element.addEventListener('submit', this.submitHandler.bind(this));
   }
 
   private appendHtml() {
