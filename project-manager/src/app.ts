@@ -1,4 +1,31 @@
+// Interface
+interface Validatable {
+  value: string | number;
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  min?: number;
+  max?: number;
+}
+
+// Validator Function
+/**
+ * @param validateAbleObj
+ */
+function validator(validateAbleObj: Validatable) {
+  let isValid = true;
+  if (validateAbleObj.required) {
+    isValid = isValid && validateAbleObj.value.toString().trim().length !== 0;
+  }
+}
+
 // Decorators
+/**
+ * @param _
+ * @param __
+ * @param descriptor
+ * @returns
+ */
 function AutoBind(_: any, __: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value;
   const adjDescriptor: PropertyDescriptor = {
@@ -35,6 +62,9 @@ class ProjectInput {
     this.appendHtml();
   }
 
+  /**
+   * @returns
+   */
   private fetchUserInputs(): [string, string, number] | void {
     const enteredTitle = this.titleInpEl.value;
     const enteredDescription = this.descriptionInpEl.value;
@@ -55,6 +85,9 @@ class ProjectInput {
     this.titleInpEl.value = this.descriptionInpEl.value = this.peopleInpEl.value = '';
   }
 
+  /**
+   * @param event
+   */
   @AutoBind
   private submitHandler(event: Event) {
     event.preventDefault();
