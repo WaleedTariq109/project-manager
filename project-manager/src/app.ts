@@ -1,4 +1,4 @@
-// Interface
+//* Interface
 interface Validatable {
   value: string | number;
   required?: boolean;
@@ -8,7 +8,7 @@ interface Validatable {
   max?: number;
 }
 
-// Validator Function
+//* Validator Function
 /**
  * @param validateAbleObj
  */
@@ -33,7 +33,7 @@ function validator(validateAbleObj: Validatable) {
   return isValid;
 }
 
-// Decorators
+//* Decorators
 /**
  * @param _
  * @param __
@@ -53,7 +53,37 @@ function AutoBind(_: any, __: string, descriptor: PropertyDescriptor) {
   return adjDescriptor;
 }
 
-// Class Defination
+//? Class Definations
+
+//* Project List Class
+class ProjectList {
+  templateEl: HTMLTemplateElement;
+  hostEl: HTMLDivElement;
+  element: HTMLElement;
+
+  constructor(private type: 'active' | 'finished') {
+    this.templateEl = <HTMLTemplateElement>document.querySelector('#project-list');
+    this.hostEl = <HTMLDivElement>document.querySelector('#app');
+    const importedNode = document.importNode(this.templateEl.content, true);
+    this.element = <HTMLElement>importedNode.firstElementChild;
+    this.element.id = `${this.type}-projects`;
+
+    this.appendHtml();
+    this.renderContent();
+  }
+
+  private renderContent(): void {
+    const listId = `${this.type}-project-list`;
+    this.element.querySelector('ul')!.id = listId;
+    this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + ' PROJECTS';
+  }
+
+  private appendHtml(): void {
+    this.hostEl.insertAdjacentElement('beforeend', this.element);
+  }
+}
+
+//* Project Input Class
 class ProjectInput {
   templateEl: HTMLTemplateElement;
   hostEl: HTMLDivElement;
@@ -107,7 +137,7 @@ class ProjectInput {
     }
   }
 
-  private clearInput() {
+  private clearInput(): void {
     this.titleInpEl.value = this.descriptionInpEl.value = this.peopleInpEl.value = '';
   }
 
@@ -115,7 +145,7 @@ class ProjectInput {
    * @param event
    */
   @AutoBind
-  private submitHandler(event: Event) {
+  private submitHandler(event: Event): void {
     event.preventDefault();
     const userInputs = this.fetchUserInputs();
     if (Array.isArray(userInputs)) {
@@ -128,13 +158,15 @@ class ProjectInput {
     this.clearInput();
   }
 
-  private configure() {
+  private configure(): void {
     this.element.addEventListener('submit', this.submitHandler);
   }
 
-  private appendHtml() {
+  private appendHtml(): void {
     this.hostEl.insertAdjacentElement('afterbegin', this.element);
   }
 }
 
 const prtInp = new ProjectInput();
+const activeProject = new ProjectList('active');
+const finishedProject = new ProjectList('finished');
