@@ -1,4 +1,7 @@
 //* Interface
+/**
+ * @interface Validatable
+ */
 interface Validatable {
   value: string | number;
   required?: boolean;
@@ -10,7 +13,7 @@ interface Validatable {
 
 //* Validator Function
 /**
- * @param validateAbleObj
+ * @param validateAbleObj Required and must satisfy Validatable Interface
  */
 function validator(validateAbleObj: Validatable) {
   let isValid = true;
@@ -35,10 +38,10 @@ function validator(validateAbleObj: Validatable) {
 
 //* Decorators
 /**
- * @param _
- * @param __
- * @param descriptor
- * @returns
+ * @param _ Required but never used
+ * @param __ Required but never used
+ * @param descriptor Required and must be a PropertyDescriptor
+ * @returns Always return PropertyDescriptor
  */
 function AutoBind(_: any, __: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value;
@@ -55,28 +58,102 @@ function AutoBind(_: any, __: string, descriptor: PropertyDescriptor) {
 
 //? Class Definations
 
+//* Project State management Class
+class ProjectState {
+  private listners: any[] = [];
+  private projects: any[] = [];
+  private static instance: ProjectState;
+
+  private constructor() {}
+
+  static getInstance(): ProjectState {
+    if (this.instance) {
+      return this.instance;
+    }
+    return (this.instance = new ProjectState());
+  }
+
+  /**
+   * @param listnersFn Required and receives Listner Function
+   */
+  addListners(listnersFn: Function): void {
+    this.listners.push(listnersFn);
+  }
+
+  /**
+   * @param title Required and must be a string
+   * @param description Required must be a string
+   * @param numOfPeoples Required must be a number
+   */
+  addProject(title: string, description: string, numOfPeoples: number): void {
+    const newProject = {
+      id: Math.random().toString(),
+      title,
+      description,
+      numOfPeoples,
+    };
+    this.projects.push(newProject);
+    for (const listnersFn of this.listners) {
+      listnersFn(this.projects.slice());
+    }
+  }
+}
+
+const projectState = ProjectState.getInstance();
+
 //* Project List Class
 class ProjectList {
   templateEl: HTMLTemplateElement;
   hostEl: HTMLDivElement;
   element: HTMLElement;
+  assignedProject: any[];
 
+  /**
+   * @param type Required and must be string 'active' | 'finished'
+   */
   constructor(private type: 'active' | 'finished') {
     this.templateEl = <HTMLTemplateElement>document.querySelector('#project-list');
     this.hostEl = <HTMLDivElement>document.querySelector('#app');
     const importedNode = document.importNode(this.templateEl.content, true);
     this.element = <HTMLElement>importedNode.firstElementChild;
     this.element.id = `${this.type}-projects`;
+    this.assignedProject = [];
+
+    projectState.addListners((projects: any[]) => {
+      this.assignedProject = projects;
+      this.renderProjects();
+    });
 
     this.appendHtml();
     this.renderContent();
   }
+
+  /**
+   * @private Returns Nothing just render projects on DOM
+   */
+
+  private renderProjects(): void {
+    const listEl = <HTMLUListElement>document.querySelector(`#${this.type}-project-list`)!;
+    for (const prjItem of this.assignedProject) {
+      const listItem = document.createElement('li');
+      listItem.textContent = prjItem.title;
+      listEl.appendChild(listItem);
+    }
+  }
+
+  /**
+   * @private Returns Nothing just render content on DOM
+   */
 
   private renderContent(): void {
     const listId = `${this.type}-project-list`;
     this.element.querySelector('ul')!.id = listId;
     this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + ' PROJECTS';
   }
+
+  /**
+   * @private Returns Nothing just Append the HTML code on DOM
+   */
 
   private appendHtml(): void {
     this.hostEl.insertAdjacentElement('beforeend', this.element);
@@ -107,7 +184,7 @@ class ProjectInput {
   }
 
   /**
-   * @returns
+   * @returns Nothing or Tuple
    */
   private fetchUserInputs(): [string, string, number] | void {
     const enteredTitle = this.titleInpEl.value;
@@ -142,7 +219,7 @@ class ProjectInput {
   }
 
   /**
-   * @param event
+   * @param event Required and must be an Event Object
    */
   @AutoBind
   private submitHandler(event: Event): void {
@@ -150,9 +227,7 @@ class ProjectInput {
     const userInputs = this.fetchUserInputs();
     if (Array.isArray(userInputs)) {
       const [title, description, people] = userInputs;
-      console.log(title);
-      console.log(description);
-      console.log(people);
+      projectState.addProject(title, description, people);
     }
 
     this.clearInput();
