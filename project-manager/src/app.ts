@@ -58,10 +58,29 @@ function AutoBind(_: any, __: string, descriptor: PropertyDescriptor) {
 
 //? Class Definations
 
+//* Project Type
+enum ProjectStatus {
+  Active,
+  Finished,
+}
+
+class Project {
+  constructor(
+    public id: string,
+    public title: string,
+    public description: string,
+    public numOfPeople: number,
+    public status: ProjectStatus
+  ) {}
+}
+
+// Custom Type
+type Listner = (items: Project[]) => void;
+
 //* Project State management Class
 class ProjectState {
-  private listners: any[] = [];
-  private projects: any[] = [];
+  private listners: Listner[] = [];
+  private projects: Project[] = [];
   private static instance: ProjectState;
 
   private constructor() {}
@@ -76,7 +95,7 @@ class ProjectState {
   /**
    * @param listnersFn Required and receives Listner Function
    */
-  addListners(listnersFn: Function): void {
+  addListners(listnersFn: Listner): void {
     this.listners.push(listnersFn);
   }
 
@@ -86,12 +105,7 @@ class ProjectState {
    * @param numOfPeoples Required must be a number
    */
   addProject(title: string, description: string, numOfPeoples: number): void {
-    const newProject = {
-      id: Math.random().toString(),
-      title,
-      description,
-      numOfPeoples,
-    };
+    const newProject = new Project(Math.random().toString(), title, description, numOfPeoples, ProjectStatus.Active);
     this.projects.push(newProject);
     for (const listnersFn of this.listners) {
       listnersFn(this.projects.slice());
@@ -106,7 +120,7 @@ class ProjectList {
   templateEl: HTMLTemplateElement;
   hostEl: HTMLDivElement;
   element: HTMLElement;
-  assignedProject: any[];
+  assignedProject: Project[];
 
   /**
    * @param type Required and must be string 'active' | 'finished'
@@ -119,7 +133,7 @@ class ProjectList {
     this.element.id = `${this.type}-projects`;
     this.assignedProject = [];
 
-    projectState.addListners((projects: any[]) => {
+    projectState.addListners((projects: Project[]) => {
       this.assignedProject = projects;
       this.renderProjects();
     });
