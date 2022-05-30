@@ -6,11 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>ProjectManager</title>
     <link rel="stylesheet" href="app.css" />
-    <link
-      rel="shortcut icon"
-      href="https://cdn.pixabay.com/photo/2017/10/19/16/30/project-management-2868276_1280.png"
-      type="image/x-icon"
-    />
     <script src="dist/app.js" defer></script>
   </head>
   <body>
@@ -26,13 +21,17 @@
         </div>
         <div class="form-control">
           <label for="people">People</label>
-          <input type="number" id="people" step="1" min="1" max="5" />
+          <input type="number" id="people" step="1" min="0" max="10" />
         </div>
         <button type="submit">ADD PROJECT</button>
       </form>
     </template>
     <template id="single-project">
-      <li></li>
+      <li draggable="true">
+        <h2></h2>
+        <h3></h3>
+        <p></p>
+      </li>
     </template>
     <template id="project-list">
       <section class="projects">
