@@ -1,17 +1,16 @@
 {
-  "name": "understanding-typescript",
+  "name": "search-locations",
   "version": "1.0.0",
-  "description": "Understanding TypeScript Course Setup",
+  "description": "Search Locations",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server"
   },
   "keywords": [
-    "typescript",
-    "course"
+    "typescript"
   ],
-  "author": "Maximilian Schwarzmüller",
+  "author": "Waleed Tariq",
   "license": "ISC",
   "devDependencies": {
     "@types/googlemaps": "^3.43.3",
